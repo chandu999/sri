@@ -79,6 +79,7 @@
 		<target name="stop" description="stop application in tomcat">
 		      <stop url="${tomcat-manager-url}" username="${tomcat-manager-username}"
 			                 password="${tomcat-manager-password}" path="${path}"/>
+<echo>hello</echo>
 	</target>
 	<property name="sonar.host.url" value="http://localhost:9000" />
  
