@@ -1,0 +1,106 @@
+<project name="anand"  basedir="." xmlns:sonar="antlib:org.sonar.ant">
+<property name="src" value="src"/>
+<property name="class" value="build/class"/>
+<property name="jar" value="build/jar"/>
+<property name="tomcat-manager-url" value="http://localhost:1010/manager/text"/>
+<property name="tomcat-manager-username" value="anand"/>
+<property name="tomcat-manager-password" value="anand"/>
+<property name="path" value="/manaapp"/>
+<path id="classpath">
+<fileset dir="lib" includes="*.jar"/>
+</path>
+<target name="clean">
+                    <echo>i am going to clean the build</echo>
+                    <delete dir="build/class"/>
+					<delete file= "src\HelloWorld.java"/>
+<echo> hi to alll</echo>
+</target>
+<target name="compile">
+                                       <mkdir dir="${class}"/>
+                                       <javac  srcdir="${src}" destdir="${class}" 
+                                               includeantruntime="false" verbose="true"
+                                               optimize="yes" fork="true" listfiles="true"/></target>
+
+    <taskdef name="start" classname="org.apache.catalina.ant.StartTask" classpathref="classpath" />
+	<taskdef name="stop" classname="org.apache.catalina.ant.StopTask"  classpathref="classpath"/>
+	<taskdef name="deploy" classname="org.apache.catalina.ant.DeployTask"  classpathref="classpath"/>
+	<taskdef name="undeploy" classname="org.apache.catalina.ant.UndeployTask"  classpathref="classpath"/>											   
+ <target name="jar" depends="compile">
+<delete file="HelloWorld.war"/>
+<war destfile="HelloWorld.war" webxml="WEB-INF\web.xml">
+<fileset dir="WEB-INF">
+<include name="**/*.*"/>
+</fileset>
+<fileset dir="META-INF">
+<include name="**/*.*"/>
+</fileset>
+<fileset dir="jsps">
+<include name="**/*.*"/>
+</fileset>
+</war>
+</target>
+ <target name="run" depends="jar">
+<java jar="build/jar/HelloWorld.jar" fork="true"/>
+ </target>
+ <!--target name="svntask" depends="clean">
+ 
+ <exec executable="C:\Program Files\VisualSVN Server\bin\svn">
+ <arg value="export"/>
+ <arg value="https://ANAND-PC/svn/anand/colour/branches/HelloWorld.java"/>
+ <arg value="D:\antwork\src"/>
+ </exec>
+ </target-->
+ 
+ 
+ 
+ <target name="start" description="start application in tomcat">
+		<start url="${tomcat-manager-url}" username="${tomcat-manager-username}"
+			password="${tomcat-manager-password}" path="${path}" />
+			</target>
+ <target name="deploy" description="deploy to tomcat">
+		<echo>deploying from client</echo>
+		<deploy 
+			url="${tomcat-manager-url}"
+			username="${tomcat-manager-username}"
+			password="${tomcat-manager-password}"
+			path="${path}"
+			war="HelloWorld.war"
+		/>
+</target>
+<target name="undeploy" description="undeploy to tomcat" >
+		<echo>deploying from client</echo>
+		<undeploy 
+			url="${tomcat-manager-url}"
+			username="${tomcat-manager-username}"
+			password="${tomcat-manager-password}"
+			path="${path}"
+		/>
+		</target>
+		<target name="stop" description="stop application in tomcat">
+		      <stop url="${tomcat-manager-url}" username="${tomcat-manager-username}"
+			                 password="${tomcat-manager-password}" path="${path}"/>
+	</target>
+	<property name="sonar.host.url" value="http://localhost:9000" />
+ 
+ 
+<!-- Define the SonarQube project properties -->
+<property name="sonar.projectKey" value="org.codehaus.sonar:example-java-ant" />
+<property name="sonar.projectName" value="Simple Java Project analyzed with the SonarQube Ant Task" />
+<property name="sonar.projectVersion" value="1.0" />
+<property name="sonar.java.binaries" value="build" />
+<property name="sonar.java.libraries" value="lib/*.jar" />
+ 
+<!-- Define the SonarQube target -->
+<target name="sonar">
+    <taskdef uri="antlib:org.sonar.ant" resource="org/sonar/ant/antlib.xml">
+        <!-- Update the following line, or put the "sonarqube-ant-task-*.jar" file in your "$HOME/.ant/lib" folder -->
+        <classpath path="path/to/sonar/ant/task/lib/sonarqube-ant-task-*.jar" />
+    </taskdef>
+ 
+    <!-- Execute the SonarQube analysis -->
+   
+	
+	<sonar:sonar/>
+
+</target>
+</project>
